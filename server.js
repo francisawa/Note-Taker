@@ -37,40 +37,39 @@ app.get("/notes", function(req, res) {
   app.get("/", function(req, res) {
     res.sendFile(path.join(__dirname, "public/index.html"));
   });
-
+  function getjson(){
+    let data = fs.readFileSync(__dirname + '/db/db.json');
+    let json = JSON.parse(data);
+      return json;
+  }
+  function createNoteObject(data){
+  let Obj = {
+    title: data.title,
+    text: data.text,
+    complete: false,
+    hidden: false
+  }
+  return obj
+  }
+  function addNoteToJSON(note) {
+    let json =getjson();
+    let newNote = createNoteObject(note);
+    json.push(newNote);
+    saveJSON(json);
+  
+  }
+  function saveJSON(jsonData) {
+    let data = JSON.stringify(jsonData);
+    fs.writeFileSync(__dirname + '/db/db.json', data)
+  
+  }
+  function deleteNoteFromJSON(id) {
+    let json = getjson();
+    json[id].hide = true
+    saveJSON(json);
+  }
 // / Starts the server to begin listening
 // =============================================================
 app.listen(PORT, function() {
   console.log("App listening on PORT " + PORT);
 });
-function getjson(){
-  let data = fs.readFileSync(__dirname + '/db/db.json');
-  let json = JSON.parse(data);
-    return json;
-}
-function createNoteObject(data){
-let Obj = {
-  title: data.title,
-  text: data.text,
-  complete: false,
-  hidden: false
-}
-return obj
-}
-function addNoteToJSON(note) {
-  let json =getjson();
-  let newNote = createNoteObject(note);
-  json.push(newNote);
-  saveJSON(json);
-
-}
-function saveJSON(jsonData) {
-  let data = JSON.stringify(jsonData);
-  fs.writeFileSync(__dirname + '/db/db.json', data)
-
-}
-function deleteNoteFromJSON(id) {
-  let json = getjson();
-  json[id].hide = true
-  saveJSON(json);
-}
