@@ -1,6 +1,7 @@
 var express = require("express");
 var path = require("path");
 var fs = require("fs")
+var {uuid} = require("uuidv4")
 // Sets up the Express App
 // =============================================================
 var app = express();
@@ -26,7 +27,7 @@ app.post("/api/notes", function(req, res){
 app.delete("/api/notes/:id", function(req, res){
   console.log('api/notesdelete');
   deleteNoteFromJSON(req.params.id);
-  console.log(json);
+  
   res.json(getjson());
 } )
 // html routes
@@ -46,10 +47,9 @@ app.get("/notes", function(req, res) {
   let Obj = {
     title: data.title,
     text: data.text,
-    complete: false,
-    hidden: false
+    id: uuid()
   }
-  return obj
+  return Obj
   }
   function addNoteToJSON(note) {
     let json =getjson();
@@ -65,8 +65,10 @@ app.get("/notes", function(req, res) {
   }
   function deleteNoteFromJSON(id) {
     let json = getjson();
-    json[id].hide = true
-    saveJSON(json);
+    let filteredJson = json.filter(function(j){
+      return (j.id !== id)
+    })
+    saveJSON(filteredJson);
   }
 // / Starts the server to begin listening
 // =============================================================
